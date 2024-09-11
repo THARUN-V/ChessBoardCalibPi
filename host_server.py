@@ -48,16 +48,38 @@ class ServerSocket():
         self.conn , self.addr = None , None
         self.connected = False
         
+        
+        # thread to wait till connection with client
         connect_func = threading.Thread(target = self.wait_for_connection)
         connect_func.daemon = True
         connect_func.start()
         
+        # thread to print the recieved msg from client
+        msg_func = threading.Thread(target = self.receive_data_from_client)
+        msg_func.daemaon = True
+        msg_func.start()
+        
     def wait_for_connection(self):
+        """
+        Function to wait till the connection is established with client.
+        """
         
         self.conn , self.addr = self.server_socket.accept()
 
         print(f"Connected by {self.addr}")
         self.connected = True
+        
+    def receive_data_from_client(self):
+        """
+        Function to receive message from client after connection.
+        """
+        while True:
+            if self.connected:
+                self.data = self.conn.recv(1024)
+                if not self.data:
+                    print("-------- No data from client ----------")
+                else:
+                    print(f"=== Received from client : {self.data.decode()}")
         
         
     def __del__(self):
