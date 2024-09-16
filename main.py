@@ -8,12 +8,11 @@ class ChessBoardCamCalib(ParseArgs):
         
         ParseArgs.__init__(self)
         
-        socket_server = SocketServer()
-        socket_client = SocketClient()
-        
         if self.args.server:
+            socket_server = SocketServer()
             socket_server.run_server()
         if self.args.client:
+            socket_client = SocketClient()
             socket_client.run_client()
 
 if __name__ == "__main__":
