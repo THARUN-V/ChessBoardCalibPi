@@ -3,37 +3,6 @@ import socket
 import threading
 import time
 
-# def start_server():
-#     HOST = '0.0.0.0'
-#     PORT = 12345
-
-#     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#     server_socket.bind((HOST, PORT))
-#     server_socket.listen()
-#     print(f"Server listening on {HOST}:{PORT}")
-
-#     conn, addr = server_socket.accept()
-#     print(f"Connected by {addr}")
-
-#     try:
-#         while True:
-#             data = conn.recv(1024)
-#             if not data:
-#                 print("No data received. Closing connection.")
-#                 break
-#             print(f"Received from client: {data.decode()}")
-            
-#             message = "Message received!"
-#             conn.sendall(message.encode())
-#     except Exception as e:
-#         print(f"Error: {e}")
-#     finally:
-#         conn.close()
-#         server_socket.close()
-
-# if __name__ == '__main__':
-#     start_server()
-
 class ServerSocket():
     def __init__(self):
         self.SERVER_HOST = "0.0.0.0"
