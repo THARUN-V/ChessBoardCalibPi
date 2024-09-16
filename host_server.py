@@ -3,7 +3,7 @@ import socket
 import threading
 import time
 
-class ServerSocket():
+class SocketServer():
     def __init__(self):
         self.SERVER_HOST = "0.0.0.0"
         self.SERVER_PORT = 12345
@@ -51,6 +51,20 @@ class ServerSocket():
                     print(f"=== Received from client : {self.data.decode()}")
         
         
+    def run_server(self):
+        #### wait for client to connect ####
+        flag = True
+        try:
+            while True:
+                if server.connected and flag:
+                    print("connected to client")
+                    flag = False
+        except KeyboardInterrupt:
+            pass
+        #### End of, wait for client to connect ###
+        
+        
+    
     def __del__(self):
         self.conn.close()
         self.server_socket.close()
@@ -60,7 +74,7 @@ class ServerSocket():
 
 if __name__ == "__main__":
     
-    server = ServerSocket()
+    server = SocketServer()
     
     flag = True
     try:

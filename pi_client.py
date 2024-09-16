@@ -2,7 +2,7 @@ import socket
 import threading
 import time
 
-class SocketClient:
+class SocketClient():
     
     def __init__(self):
         
@@ -49,6 +49,10 @@ class SocketClient:
                 self.client_socket.sendall(message.encode())
                 print("- Message Sent To Server -")
                 time.sleep(2)
+                
+    def run_client(self):
+        while True:
+            pass
         
     def __del__(self):
         self.client_socket.close()
