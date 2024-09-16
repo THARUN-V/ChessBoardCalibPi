@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handling Different Data Types Over Socket</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2e2e2e;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+        }
+        pre {
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap; /* Allows wrapping of long lines */
+        }
+        code {
+            color: #dcdcaa; /* Default code color */
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #6a9955;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .number {
+            color: #b5cea8;
+        }
+        .import {
+            color: #9cdcfe;
+        }
+    </style>
+</head>
+<body>
+    <h1>Handling Different Data Types Over Socket</h1>
+
+    <h2>Client Code</h2>
+    <pre><code class="python">
+<span class="import">import</span> socket
+<span class="import">import</span> pickle
+<span class="import">import</span> cv2
+<span class="import">import</span> numpy <span class="import">as</span> np
+
+<span class="function">def</span> <span class="function">send_data</span>(client_socket, data):
+    serialized_data = pickle.<span class="function">dumps</span>(data)
+    client_socket.<span class="function">sendall</span>(serialized_data)
+
+<span class="function">def</span> <span class="function">send_image</span>(client_socket, image_path):
+    image = cv2.<span class="function">imread</span>(image_path)
+    _, img_encoded = cv2.<span class="function">imencode</span>('.jpg', image)
+    serialized_img = pickle.<span class="function">dumps</span>(img_encoded)
+    client_socket.<span class="function">sendall</span>(serialized_img)
+
+client_socket = socket.<span class="function">socket</span>(socket.AF_INET, socket.SOCK_STREAM)
+client_socket.<span class="function">connect</span>(('localhost', 12345))
+
+# Example data
+data_list = [1, 2, 3, (4, 5)]
+data_tuple = (6, 7, 8)
+image_path = 'example.jpg'
+
+send_data(client_socket, data_list)
+send_data(client_socket, data_tuple)
+send_image(client_socket, image_path)
+
+client_socket.<span class="function">close</span>()
+    </code></pre>
+
+    <h2>Server Code</h2>
+    <pre><code class="python">
+<span class="import">import</span> socket
+<span class="import">import</span> pickle
+<span class="import">import</span> cv2
+<span class="import">import</span> numpy <span class="import">as</span> np
+
+<span class="function">def</span> <span class="function">receive_data</span>(conn):
+    data = b''
+    <span class="keyword">while</span> <span class="keyword">True</span>:
+        part = conn.<span class="function">recv</span>(4096)
+        data += part
+        <span class="keyword">if</span> <span class="keyword">len</span>(part) < 4096:
+            <span class="keyword">break</span>
+    <span class="keyword">return</span> pickle.<span class="function">loads</span>(data)
+
+<span class="function">def</span> <span class="function">process_data</span>(data):
+    <span class="keyword">if</span> <span class="keyword">isinstance</span>(data, <span class="import">list</span>):
+        print(<span class="string">"Received list:"</span>, data)
+    <span class="keyword">elif</span> <span class="keyword">isinstance</span>(data, <span class="import">tuple</span>):
+        print(<span class="string">"Received tuple:"</span>, data)
+    <span class="keyword">elif</span> <span class="keyword">isinstance</span>(data, np.ndarray):  <span class="comment"># Check if it's an OpenCV image</span>
+        img = cv2.<span class="function">imdecode</span>(data, cv2.IMREAD_COLOR)
+        cv2.<span class="function">imshow</span>(<span class="string">'Received Image'</span>, img)
+        cv2.<span class="function">waitKey</span>(0)
+        cv2.<span class="function">destroyAllWindows</span>()
+    <span class="keyword">else</span>:
+        print(<span class="string">"Received unknown type:"</span>, <span class="keyword">type</span>(data))
+
+server_socket = socket.<span class="function">socket</span>(socket.AF_INET, socket.SOCK_STREAM)
+server_socket.<span class="function">bind</span>(('localhost', 12345))
+server_socket.<span class="function">listen</span>()
+conn, addr = server_socket.<span class="function">accept</span>()
+
+<span class="keyword">while</span> <span class="keyword">True</span>:
+    data = receive_data(conn)
+    process_data(data)
+
+conn.<span class="function">close</span>()
+    </code></pre>
+
+</body>
+</html>
