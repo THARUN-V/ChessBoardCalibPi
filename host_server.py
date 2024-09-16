@@ -56,7 +56,7 @@ class SocketServer():
         flag = True
         try:
             while True:
-                if server.connected and flag:
+                if self.connected and flag:
                     print("connected to client")
                     flag = False
         except KeyboardInterrupt:
